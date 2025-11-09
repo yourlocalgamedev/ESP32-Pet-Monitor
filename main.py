@@ -47,28 +47,29 @@ async def main():
 
     await asyncio.sleep(0.1)
 
-    networking.connect_wifi()
-    networking.sync_time()
+    networking.connectWifi()
+    networking.syncTime()
 
     while not wlan.isconnected():
-        await text_manager.scroll_message("Connecting to WiFi...               ", 0.2, 0, repeat=False)
+        await text_manager.scrollMessage("Connecting to WiFi...               ", 0.2, 0, repeat=False)
         
-    await text_manager.scroll_message("Successfully connected to WiFi network!               ", 0.2, 0, repeat=False)
+    await text_manager.scrollMessage("Successfully connected to WiFi network!               ", 0.2, 0, repeat=False)
     
-    #networking.trigger_voice_monkey("2")
+    #networking.alexaAlert(2)
     
     
     asyncio.create_task(text_manager.dynamicScrollMessage(row=1, delay=0.2))
     
     while True:
-        text_manager.displayIcons(notifsOn, wlan.isConnected())
+        text_manager.displayIcons(notifsOn, wlan.isconnected())
+        text_manager.displayTime()
         await asyncio.sleep(1)
 
-        if not wlan.isConnected():
+        if not wlan.isconnected():
             networking.connectWifi()
             while not wlan.isconnected():
-                await text_manager.scroll_message("Connecting to WiFi...               ", 0.2, 0, repeat=False)
-            await text_manager.scroll_message("Successfully connected to WiFi network!               ", 0.2, 0, repeat=False)
+                await text_manager.scrollMessage("Connecting to WiFi...               ", 0.2, 0, repeat=False)
+            await text_manager.scrollMessage("Successfully connected to WiFi network!               ", 0.2, 0, repeat=False)
     
         
         

@@ -23,7 +23,10 @@ lcd = I2cLcd(i2c, lcdAddr, lcdRows, lcdColumns)
 
 currentBottomScreenMessage = "No Outstanding Issues, Have a Nice Day               " # 15 spaces added to ensure message fully scrolls off
 
-alarmIcon = bytearray([0x00, 0x04, 0x0E, 0x0E, 0x0E, 0x1F, 0x00, 0x04]) # Also create a connection icon at some point
+connectionIcon = bytearray([0x00, 0x00, 0x01, 0x01, 0x05, 0x05, 0x15, 0x15])
+lcd.custom_char(0, connectionIcon)
+
+alarmIcon = bytearray([0x00, 0x04, 0x0E, 0x0E, 0x0E, 0x1F, 0x00, 0x04])
 lcd.custom_char(1, alarmIcon)
 
 ## FUNCTIONS ##
@@ -44,7 +47,8 @@ def displayIcons(notified, connected):
 
 
 def displayTime():
-    lcd.move_to(11,0)
+    t = networking.localTime()
+    lcd.move_to(3,0)
     localTime = networking.localTime()
     currentTime = "{:02d}:{:02d}".format(t[3], t[4])
     lcd.putstr(currentTime)
