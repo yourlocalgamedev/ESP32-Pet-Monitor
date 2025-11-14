@@ -50,10 +50,23 @@ async def main():
     networking.connectWifi()
     networking.syncTime()
 
-    while not wlan.isconnected():
-        await text_manager.scrollMessage("Connecting to WiFi...               ", 0.2, 0, repeat=False)
+    connected = networking.connectWifi()
+    if not connected:
+        while not wlan.isconnected():
+            await text_manager.scrollMessage("Connecting to WiFi...               ", 0.2, 0, repeat=False)
+
+    if wlan.isconnected():
+        await text_manager.scrollMessage("Successfully connected to WiFi network               ", 0.2, 0, repeat=False)
         
-    await text_manager.scrollMessage("Successfully connected to WiFi network!               ", 0.2, 0, repeat=False)
+    while True:
+        await text_manager.scrollMessage("Synchronising time...               ", 0.2, 0, repeat=False)
+
+        synced = networking.syncTime()
+        if synced:
+            break
+
+        await asyncio.sleep(2)
+    await text_manager.scrollMessage("Successfully synchronised time               ", 0.2, 0, repeat=False)
     
     #networking.alexaAlert(2)
     

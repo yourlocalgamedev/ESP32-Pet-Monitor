@@ -40,32 +40,37 @@ def alexaAlert(messageType):
         print("Error:", e)
         
 def syncTime():
-    print("Synchronising with NTP...")
     try:
-        ntptime.settime()  # sets UTC
-        print("Time synced successfully.")
+        ntptime.settime()
+        return True
     except Exception as e:
-        print("NTP sync failed:", e)
+        return False
 
 def localTime():
-    # Check if British Summer Time (Clocks move forward) should be applied (last Sunday in March to last Sunday in October)
-    t = time.localtime()  # UTC
-    year = t[0]
-    month = t[1]
-    day = t[2]
+    # Get current UTC time from RTC
+    t = time.localtime()
+    year, month, day = t[0], t[1], t[2]
 
-    # Calculate last Sunday in March
-    lastSundayinMarch = max(d for d in range(31, 24, -1)
-                            if time.localtime(time.mktime((year, 3, d, 0, 0, 0, 0, 0)))[6] == 6)
-    # Calculate last Sunday in October
-    lastSundayinnOctober = max(d for d in range(31, 24, -1)
-                              if time.localtime(time.mktime((year, 10, d, 0, 0, 0, 0, 0)))[6] == 6)
+    def lastSunday(year, month):
+        # Start from last day of the month and move backwards to Sunday
+        for d in range(31, 24, -1):
+            try:
+                if time.localtime(time.mktime((year, month, d, 0, 0, 0, 0, 0)))[6] == 6:
+                    return d
+            except:
+                continue
+        return 31
+
+    lastSundayMarch = lastSunday(year, 3)
+    lastSundayOctober = lastSunday(year, 10)
 
     # Determine if within BST
-    if (month > 3 and month < 10) or (month == 3 and day >= lastSundayinMarch) or (month == 10 and day < lastSundayinnOctober):
-        offset = 3600  # +1 hour for BST
+    if (month > 3 and month < 10) or \
+       (month == 3 and day >= lastSundayMarch) or \
+       (month == 10 and day < lastSundayOctober):
+        offset = 3600  # +1 hour
     else:
-        offset = 0  # GMT
+        offset = 0     # GMT
 
     t_local = time.localtime(time.time() + offset)
     return t_local

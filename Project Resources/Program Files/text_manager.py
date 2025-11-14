@@ -49,7 +49,6 @@ def displayIcons(notified, connected):
 def displayTime():
     t = networking.localTime()
     lcd.move_to(3,0)
-    localTime = networking.localTime()
     currentTime = "{:02d}:{:02d}".format(t[3], t[4])
     lcd.putstr(currentTime)
 
